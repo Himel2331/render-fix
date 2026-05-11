@@ -4601,9 +4601,10 @@ def get_session_ranking(session_id: str) -> List[Dict[str, Any]]:
                     delay = max(0, answered_at - open_ts)
                     duration += min(delay, window)
                 else:
-                    duration += window
+                    if ans_map: last_answered = max(ans_map.values())
+                                duration = max(0, last_answered - session_started)
         else:
-            duration = answered_count * default_window
+            duration = 0
 
         full = " ".join(x for x in [row["first_name"], row["last_name"]] if x).strip()
         main_name, sub_name = split_user_labels(full or row["display_name"], row["username"], int(row["user_id"]))
