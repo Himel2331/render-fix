@@ -3511,10 +3511,10 @@ async def send_private_results(context, session_id: str) -> None:
             '',
             f'Rank: <b>#{rank_item["rank"]}</b> / {total_users}',
             f'Score: <b>{rank_item["score"]}</b>',
-            f'Negative / wrong: <b>{session["negative_mark"]}</b>',
-            f'✅ Correct: <b>{correct}</b>   ❌ Wrong: <b>{wrong}</b>   ➖ Skipped: <b>{skipped}</b>',
-            f'🎯 Accuracy: <b>{accuracy:.2f}%</b>   📊 Percentage: <b>{percentage:.2f}%</b>',
-            f'🏆 Percentile: <b>{percentile:.2f}</b>   ⏱ Time: <b>{duration_seconds}s</b>',
+            f'Negative / wrong: <b>{session["negative_mark"]}</b>\n',
+            f'✅ Correct: <b>{correct}</b>   ❌ Wrong: <b>{wrong}</b>   ➖ Skipped: <b>{skipped}</b>\n',
+            f'🎯 Accuracy: <b>{accuracy:.2f}%</b>\n📊 Percentage: <b>{percentage:.2f}%</b>\n',
+            f'⏱ Time: <b>{duration_seconds}s</b>',
             ''
         ]
         if section_data and (len(section_data) > 1 or section_data[0]['title'] != 'General'):
