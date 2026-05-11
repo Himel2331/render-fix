@@ -4600,11 +4600,14 @@ def get_session_ranking(session_id: str) -> List[Dict[str, Any]]:
                 if answered_at:
                     delay = max(0, answered_at - open_ts)
                     duration += min(delay, window)
-                else:
-                    if ans_map: last_answered = max(ans_map.values())
-                                duration = max(0, last_answered - session_started)
+        # skip হলে কোনো সময় যোগ হবে না
         else:
-            duration = 0
+    # qmeta না থাকলে answered হওয়া পর্যন্ত elapsed হিসাব করো
+            if ans_map:
+                last_answered = max(ans_map.values())
+                duration = max(0, last_answered - session_started)
+            else:
+                duration = 0
 
         full = " ".join(x for x in [row["first_name"], row["last_name"]] if x).strip()
         main_name, sub_name = split_user_labels(full or row["display_name"], row["username"], int(row["user_id"]))
