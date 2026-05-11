@@ -3509,11 +3509,11 @@ async def send_private_results(context, session_id: str) -> None:
         lines = [
             f'<b>{base.html_escape(session["title"])}</b>',
             '',
-            f'Rank: <b>#{rank_item["rank"]}</b> / {total_users}',
-            f'Score: <b>{rank_item["score"]}</b>',
-            f'Negative / wrong: <b>{session["negative_mark"]}</b>\n',
+            #f'Rank: <b>#{rank_item["rank"]}</b> / {total_users}',
+            f'৻ꪆ Score: <b>{rank_item["score"]}</b>\n',
             f'✅ Correct: <b>{correct}</b>   ❌ Wrong: <b>{wrong}</b>   ➖ Skipped: <b>{skipped}</b>\n',
-            f'🎯 Accuracy: <b>{accuracy:.2f}%</b>\n📊 Percentage: <b>{percentage:.2f}%</b>\n',
+            f'Negative / wrong: <b>{session["negative_mark"]}</b>',
+            f'🎯 Accuracy: <b>{accuracy:.2f}%</b>\n📊 Percentage: <b>{percentage:.2f}%</b>',
             f'⏱ Time: <b>{duration_seconds}s</b>',
             ''
         ]
