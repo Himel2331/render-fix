@@ -3652,8 +3652,8 @@ async def handle_inline_query(update: Update, context) -> None:
 
 
 
-if __name__ == "__main__":
-    base.main()
+#if __name__ == "__main__":
+    #base.main()
 
 # ============================================================
 # Final patch v9: robust text import, fixed HTML export,
@@ -4104,3 +4104,6 @@ def render_user_result_html(session: Any, participant_row: Any, rank_item: Dict[
               .replace('__LIGHT_CARD__', theme['light_card'])
               .replace('__LIGHT_BORDER__', theme['light_border'])
               .replace('__LIGHT_MUTED__', theme['light_muted']))
+
+if __name__ == "__main__":
+    base.main()
