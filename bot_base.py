@@ -6498,7 +6498,7 @@ async def callback_router(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 await query.answer("Could not create the session.", show_alert=True)
                 return
             await query.answer("Exam starting...", show_alert=False)
-            await start_exam_countdown(context, session_id, existing_message_id=query.message.message_id if query.message else None)
+            await start_exam_countdown(context, session_id)
             return
 
     if data in {"panel:home", "panel:new", "panel:drafts", "panel:groups", "panel:schedules", "panel:commands", "panel:start_exam", "panel:stop_exam"} or data.startswith(("panel:startgroup:", "panel:stopsession:", "draft:set:", "draft:del:")):
@@ -7245,7 +7245,7 @@ async def callback_router(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             _start_exam_countdown_background(
                 context,
                 session_id,
-                existing_message_id=query.message.message_id if query.message else None,
+                # existing_message_id=query.message.message_id if query.message else None,
             ),
         )
         return
