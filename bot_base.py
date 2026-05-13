@@ -2108,7 +2108,7 @@ async def callback_router(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 await query.answer("Session create EN EN।", show_alert=True)
                 return
             await query.answer("Exam starting...", show_alert=False)
-            await start_exam_countdown(context, session_id, existing_message_id=query.message.message_id if query.message else None)
+            await start_exam_countdown(context, session_id)
             return
 
     if not user_has_staff_access(user.id):
