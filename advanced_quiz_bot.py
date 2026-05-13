@@ -2675,7 +2675,7 @@ async def send_private_results(context, session_id: str) -> None:
         percentile = 100.0 if total_users <= 1 else ((total_users - int(rank_item['rank'])) / (total_users - 1)) * 100.0
         duration_seconds = int(rank_item.get('time_seconds') or 0)
         duration_label = base.fmt_elapsed(duration_seconds)
-        lines = [f'<b>🏁 {base.html_escape(session["title"])}</b>', '', f'Rank: <b>#{rank_item["rank"]}</b> / {total_users}', f'Score: <b>{rank_item["score"]}</b>', f'Negative / wrong: <b>{session["negative_mark"]}</b>', f'✅ Correct: <b>{correct}</b>', f'❌ Wrong: <b>{wrong}</b>', f'➖ Skipped: <b>{skipped}</b>', f'🎯 Accuracy: <b>{accuracy:.2f}%</b>', f'📊 Percentage: <b>{percentage:.2f}%</b>', f'🏆 Percentile: <b>{percentile:.2f}</b>', f'⏱ Time: <b>{duration_label}s</b>', '']
+        lines = [f'<b>🏁 {base.html_escape(session["title"])}</b>', '', f'Rank: <b>#{rank_item["rank"]}</b> / {total_users}', f'Score: <b>{rank_item["score"]}</b>', f'Negative / wrong: <b>{session["negative_mark"]}</b>', f'✅ Correct: <b>{correct}</b>', f'❌ Wrong: <b>{wrong}</b>', f'➖ Skipped: <b>{skipped}</b>', f'🎯 Accuracy: <b>{accuracy:.2f}%</b>', f'📊 Percentage: <b>{percentage:.2f}%</b>', f'🏆 Percentile: <b>{percentile:.2f}</b>', f'⏱ Time: <b>{duration_label}</b>', '']
         if section_data and (len(section_data) > 1 or section_data[0]['title'] != 'General'):
             lines.append('<b>Section Analysis</b>')
             for item in section_data:
@@ -3512,7 +3512,7 @@ async def send_private_results(context, session_id: str) -> None:
             #f'Rank: <b>#{rank_item["rank"]}</b> / {total_users}',
             f'৻ꪆ Score: <b>{rank_item["score"]}</b>\n',
             f'✅ Correct: <b>{correct}</b>   ❌ Wrong: <b>{wrong}</b>   ➖ Skipped: <b>{skipped}</b>\n',
-            f'⏱ Time: <b>{duration_label}s</b>',
+            f'⏱ Time: <b>{duration_label}</b>',
             f'🎯 Accuracy: <b>{accuracy:.2f}%</b>\n📊 Percentage: <b>{percentage:.2f}%</b>',
             f'Negative / wrong: <b>{session["negative_mark"]}</b>',
             ''
@@ -3795,7 +3795,7 @@ def _render_poll_question_image(question: str, options: List[str]) -> Optional[b
     pretty_opts = [_latex_to_pretty_text(x) for x in options]
     try:
         width = 1600
-        padding = 58
+        padding = 38
         bg = '#ffffff'
         fg = '#101827'
         accent = '#2563eb'
@@ -3803,14 +3803,14 @@ def _render_poll_question_image(question: str, options: List[str]) -> Optional[b
         probe = _Image.new('RGB', (width, 200), bg)
         pd = _ImageDraw.Draw(probe)
         watermark_font = _load_unicode_font(18, bold=True)
-        q_font = _load_unicode_font(42, bold=False)
-        opt_font = _load_unicode_font(34, bold=False)
+        q_font = _load_unicode_font(40, bold=False)
+        opt_font = _load_unicode_font(32, bold=False)
         q_lines = base.wrap_text(pd, pretty_q, q_font, width - 2 * padding)
         total_h = padding + (len(q_lines) * 54) + 40
         for idx, opt in enumerate(pretty_opts):
             opt_lines = base.wrap_text(pd, f'{chr(65+idx)}. {opt}', opt_font, width - 2 * padding - 36)
             total_h += max(64, len(opt_lines) * 46 + 18) + 16
-        total_h += 64
+        total_h += padding
         img = _Image.new('RGB', (width, total_h), bg)
         draw = _ImageDraw.Draw(img)
         draw.rounded_rectangle((16, 16, width - 16, total_h - 16), radius=28, outline=border, width=2, fill=bg)
@@ -3829,9 +3829,9 @@ def _render_poll_question_image(question: str, options: List[str]) -> Optional[b
                 draw.text((padding + 12, yy), line, font=opt_font, fill=fg)
                 yy += 46
             y += box_h + 16
-        watermark = 'Target Quiz Bot'
-        wb = draw.textbbox((0, 0), watermark, font=watermark_font)
-        draw.text((width - padding - (wb[2]-wb[0]), total_h - padding + 8), watermark, font=watermark_font, fill=accent)
+        #watermark = 'Target Quiz Bot'
+        #wb = draw.textbbox((0, 0), watermark, font=watermark_font)
+        #draw.text((width - padding - (wb[2]-wb[0]), total_h - padding + 8), watermark, font=watermark_font, fill=accent)
         out = _io.BytesIO()
         img.save(out, format='PNG', optimize=True)
         return out.getvalue()
@@ -4087,8 +4087,48 @@ def render_user_result_html(session: Any, participant_row: Any, rank_item: Dict[
             f"<div class='review-card {status}'><div class='head'><div><b>Q{item['q_no']}</b> • {base.html_escape(item['section'])}</div><div>{base.html_escape(status.title())}</div></div>"
             f"{q_block}<div class='line'><b>Your answer:</b> {chosen_html}</div><div class='line'><b>Correct answer:</b> {correct_html}</div>{exp_html}</div>"
         )
-    tpl = """<!DOCTYPE html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>__TITLE__ — Result</title><style>
-:root{--accent:__ACCENT__;--success:__SUCCESS__;--danger:__DANGER__;--warning:__WARNING__;--bg:__LIGHT_BG__;--text:__LIGHT_TEXT__;--muted:__LIGHT_MUTED__;--surface:__LIGHT_CARD__;--border:__LIGHT_BORDER__}body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,'Noto Sans Bengali',sans-serif;background:var(--bg);color:var(--text)}.shell{width:min(1140px,100% - 24px);margin-inline:auto;padding:28px 0}.card{background:var(--surface);border:1px solid var(--border);border-radius:24px;box-shadow:0 18px 48px rgba(15,23,42,.12)}.hero{padding:26px}.title{font-size:clamp(28px,4vw,42px);font-weight:900}.name{color:var(--muted);margin-top:6px}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:18px}.stat{padding:18px;border-radius:18px;background:#f8fafc;border:1px solid var(--border)}.label{font-size:13px;color:var(--muted);font-weight:800}.value{font-size:clamp(30px,4vw,44px);font-weight:900;margin-top:8px}.two{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}.panel{padding:22px}.table{width:100%;border-collapse:separate;border-spacing:0 10px}.table th,.table td{padding:12px 14px;text-align:left}.table thead th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.table tbody tr{background:#f8fafc}.table tbody tr.me{outline:2px solid rgba(37,99,235,.18)}.table tbody td:first-child{border-top-left-radius:14px;border-bottom-left-radius:14px}.table tbody td:last-child{border-top-right-radius:14px;border-bottom-right-radius:14px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.bar{height:10px;border-radius:999px;background:#e5e7eb;overflow:hidden;margin-top:10px}.bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),#0f172a)}.reviews{display:grid;gap:14px}.review-card{padding:18px;border-radius:18px;background:#f8fafc;border:1px solid var(--border)}.review-card.correct{border-left:5px solid var(--success)}.review-card.wrong{border-left:5px solid var(--danger)}.review-card.skipped{border-left:5px solid var(--warning)}.head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.review-q{font-size:18px;line-height:1.6;margin:10px 0}.line{margin-top:8px;line-height:1.5}.muted{color:var(--muted)}@media(max-width:900px){.two{grid-template-columns:1fr}}</style><script>window.MathJax={tex:{inlineMath:[["\\(","\\)"],["$","$"]],displayMath:[["\\[","\\]"],["$$","$$"]]},svg:{fontCache:'global'}};</script><script defer src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js'></script></head><body><div class='shell'><div class='card hero'><div class='title'>__TITLE__</div><div class='name'>Professional result report for __NAME__</div><div class='summary'>__SUMMARY__</div></div><div class='two'><div class='card panel'><div class='title' style='font-size:24px'>Ranking Board</div><table class='table'><thead><tr><th>#</th><th>Name</th><th>Correct</th><th>Wrong</th><th>Skipped</th><th>Score</th></tr></thead><tbody>__TOP_ROWS__</tbody></table></div><div class='card panel'><div class='title' style='font-size:24px'>Section Analysis</div><div class='grid' style='margin-top:14px'>__SECTION_CARDS__</div></div></div><div class='card panel' style='margin-top:18px'><div class='title' style='font-size:24px'>Detailed Review</div><div class='reviews' style='margin-top:14px'>__REVIEWS__</div></div></div></body></html>"""
+    tpl = """<!DOCTYPE html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>__TITLE__ — Result</title><link rel='preconnect' href='https://fonts.googleapis.com'><link rel='preconnect' href='https://fonts.gstatic.com' crossorigin><link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap' rel='stylesheet'><style>
+*,*::before,*::after{box-sizing:border-box}
+:root{--accent:__ACCENT__;--success:__SUCCESS__;--danger:__DANGER__;--warning:__WARNING__;--bg:__LIGHT_BG__;--text:__LIGHT_TEXT__;--muted:__LIGHT_MUTED__;--surface:__LIGHT_CARD__;--border:__LIGHT_BORDER__;--soft:#f8fafc;--radius:20px;--shadow:0 10px 30px rgba(15,23,42,.08)}
+html,body{margin:0;padding:0}
+body{font-family:'Inter','Noto Sans Bengali',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:linear-gradient(180deg,#eef2ff 0%,var(--bg) 240px);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.shell{width:100%;max-width:1140px;margin:0 auto;padding:24px 16px 48px;display:flex;flex-direction:column;gap:18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.hero{padding:28px}
+.title{font-size:clamp(24px,3.6vw,38px);font-weight:900;letter-spacing:-.01em;margin:0;line-height:1.2;word-break:break-word}
+.name{color:var(--muted);margin-top:6px;font-size:15px;word-break:break-word}
+.section-h{font-size:clamp(18px,2.4vw,22px);font-weight:800;margin:0 0 14px;letter-spacing:-.01em}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:20px}
+.stat{padding:16px;border-radius:16px;background:var(--soft);border:1px solid var(--border);min-width:0}
+.label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.value{font-size:clamp(22px,3vw,30px);font-weight:900;margin-top:6px;letter-spacing:-.02em;word-break:break-word}
+.two{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+.panel{padding:22px}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table{width:100%;min-width:520px;border-collapse:separate;border-spacing:0 8px}
+.table th,.table td{padding:12px 14px;text-align:left;vertical-align:middle}
+.table thead th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+.table tbody tr{background:var(--soft)}
+.table tbody tr.me{background:rgba(37,99,235,.08);outline:2px solid rgba(37,99,235,.25)}
+.table tbody td:first-child{border-top-left-radius:12px;border-bottom-left-radius:12px;font-weight:800}
+.table tbody td:last-child{border-top-right-radius:12px;border-bottom-right-radius:12px;font-weight:800;text-align:right}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.bar{height:10px;border-radius:999px;background:#e5e7eb;overflow:hidden;margin-top:10px}
+.bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),#0f172a);transition:width .6s ease}
+.reviews{display:grid;gap:14px}
+.review-card{padding:18px;border-radius:16px;background:var(--soft);border:1px solid var(--border)}
+.review-card.correct{border-left:5px solid var(--success)}
+.review-card.wrong{border-left:5px solid var(--danger)}
+.review-card.skipped{border-left:5px solid var(--warning)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-weight:700}
+.review-q{font-size:17px;line-height:1.65;margin:10px 0;word-wrap:break-word;overflow-wrap:anywhere}
+.line{margin-top:6px;line-height:1.55;word-wrap:break-word;overflow-wrap:anywhere}
+.muted{color:var(--muted)}
+img,svg{max-width:100%;height:auto}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+@media(max-width:560px){.shell{padding:14px 12px 32px;gap:14px}.hero,.panel{padding:18px}.summary{grid-template-columns:repeat(2,1fr);gap:10px}.stat{padding:12px;border-radius:12px}.value{font-size:20px}.label{font-size:11px}.review-card{padding:14px}.review-q{font-size:15px}.table th,.table td{padding:10px 10px}}
+@media print{body{background:#fff}.card{box-shadow:none;border-color:#e5e7eb}}
+</style><script>window.MathJax={tex:{inlineMath:[["\\\\(","\\\\)"],["$","$"]],displayMath:[["\\\\[","\\\\]"],["$$","$$"]]},svg:{fontCache:'global'}};</script><script defer src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js'></script></head><body><div class='shell'><div class='card hero'><h1 class='title'>__TITLE__</h1><div class='name'>Professional result report for __NAME__</div><div class='summary'>__SUMMARY__</div></div><div class='two'><div class='card panel'><div class='section-h'>Ranking Board</div><div class='table-wrap'><table class='table'><thead><tr><th>#</th><th>Name</th><th>Correct</th><th>Wrong</th><th>Skipped</th><th>Score</th></tr></thead><tbody>__TOP_ROWS__</tbody></table></div></div><div class='card panel'><div class='section-h'>Section Analysis</div><div class='grid'>__SECTION_CARDS__</div></div></div><div class='card panel'><div class='section-h'>Detailed Review</div><div class='reviews'>__REVIEWS__</div></div></div></body></html>"""
     return (tpl.replace('__TITLE__', title)
               .replace('__NAME__', name)
               .replace('__SUMMARY__', summary_html)
