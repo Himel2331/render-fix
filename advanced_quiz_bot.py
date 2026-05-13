@@ -3534,7 +3534,7 @@ async def send_private_results(context, session_id: str) -> None:
             await context.bot.send_message(user_id, '\n'.join(lines), parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(buttons) if buttons else None, disable_web_page_preview=True)
         with suppress(Exception):
             html_doc = render_user_result_html(session, p, rank_item, ranking, review_items, section_data)
-            await context.bot.send_document(user_id, document=InputFile(base.io.BytesIO(html_doc.encode('utf-8')), filename=f"{base.pdf_safe_filename(session['title'])}_result.html"), caption='📄 {base.normalize_visual_text(session['title'])} HTML result report.')
+            await context.bot.send_document(user_id, document=InputFile(base.io.BytesIO(html_doc.encode('utf-8')), filename=f"{base.pdf_safe_filename(session['title'])}_result.html"), caption='📄 TXQEbot HTML result report.')
 
 
 base.send_private_results = send_private_results
