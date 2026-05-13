@@ -2673,8 +2673,9 @@ async def send_private_results(context, session_id: str) -> None:
         accuracy = (correct / attempted) * 100.0
         percentage = (correct / max(1, int(session['total_questions']))) * 100.0
         percentile = 100.0 if total_users <= 1 else ((total_users - int(rank_item['rank'])) / (total_users - 1)) * 100.0
-        duration_seconds = max(0, int((session['ended_at'] or base.now_ts()) - (session['started_at'] or base.now_ts())))
-        lines = [f'<b>🏁 {base.html_escape(session["title"])}</b>', '', f'Rank: <b>#{rank_item["rank"]}</b> / {total_users}', f'Score: <b>{rank_item["score"]}</b>', f'Negative / wrong: <b>{session["negative_mark"]}</b>', f'✅ Correct: <b>{correct}</b>', f'❌ Wrong: <b>{wrong}</b>', f'➖ Skipped: <b>{skipped}</b>', f'🎯 Accuracy: <b>{accuracy:.2f}%</b>', f'📊 Percentage: <b>{percentage:.2f}%</b>', f'🏆 Percentile: <b>{percentile:.2f}</b>', f'⏱ Time: <b>{duration_seconds}s</b>', '']
+        duration_seconds = int(rank_item.get('time_seconds') or 0)
+        duration_label = base.fmt_elapsed(duration_seconds)
+        lines = [f'<b>🏁 {base.html_escape(session["title"])}</b>', '', f'Rank: <b>#{rank_item["rank"]}</b> / {total_users}', f'Score: <b>{rank_item["score"]}</b>', f'Negative / wrong: <b>{session["negative_mark"]}</b>', f'✅ Correct: <b>{correct}</b>', f'❌ Wrong: <b>{wrong}</b>', f'➖ Skipped: <b>{skipped}</b>', f'🎯 Accuracy: <b>{accuracy:.2f}%</b>', f'📊 Percentage: <b>{percentage:.2f}%</b>', f'🏆 Percentile: <b>{percentile:.2f}</b>', f'⏱ Time: <b>{duration_label}s</b>', '']
         if section_data and (len(section_data) > 1 or section_data[0]['title'] != 'General'):
             lines.append('<b>Section Analysis</b>')
             for item in section_data:
@@ -3505,14 +3506,15 @@ async def send_private_results(context, session_id: str) -> None:
         accuracy = (correct / attempted) * 100.0
         percentage = (correct / max(1, int(session['total_questions']))) * 100.0
         percentile = 100.0 if total_users <= 1 else ((total_users - int(rank_item['rank'])) / (total_users - 1)) * 100.0
-        duration_seconds = max(0, int((session['ended_at'] or base.now_ts()) - (session['started_at'] or base.now_ts())))
+        duration_seconds = int(rank_item.get('time_seconds') or 0)
+        duration_label = base.fmt_elapsed(duration_seconds)
         lines = [
             f'<b>{base.html_escape(session["title"])}</b>',
             '',
             #f'Rank: <b>#{rank_item["rank"]}</b> / {total_users}',
             f'৻ꪆ Score: <b>{rank_item["score"]}</b>\n',
             f'✅ Correct: <b>{correct}</b>   ❌ Wrong: <b>{wrong}</b>   ➖ Skipped: <b>{skipped}</b>\n',
-            f'⏱ Time: <b>{duration_seconds}s</b>',
+            f'⏱ Time: <b>{duration_label}s</b>',
             f'🎯 Accuracy: <b>{accuracy:.2f}%</b>\n📊 Percentage: <b>{percentage:.2f}%</b>',
             f'Negative / wrong: <b>{session["negative_mark"]}</b>',
             ''
