@@ -3039,7 +3039,7 @@ def _render_poll_question_image(question: str, options: List[str]) -> Optional[b
         q_font = base.FONTS.get('regular', 38)
         opt_font = base.FONTS.get('regular', 32)
         q_lines = base.wrap_text(pd, pretty_q, q_font, width - 2 * padding)
-        total_h = padding + 56 + (len(q_lines) * 52) + 20
+        total_h = padding + (len(q_lines) * 52) + 20
         for idx, opt in enumerate(pretty_opts):
             opt_lines = base.wrap_text(pd, f"{chr(65+idx)}. {opt}", opt_font, width - 2 * padding - 20)
             total_h += max(52, len(opt_lines) * 42) + 18
@@ -3048,8 +3048,6 @@ def _render_poll_question_image(question: str, options: List[str]) -> Optional[b
         draw = _ImageDraw.Draw(img)
         y = padding
         draw.rounded_rectangle((24, 24, width - 24, total_h - 24), radius=28, outline='#d0d7e2', width=2, fill='#ffffff')
-        draw.text((padding, y), 'Math / Latex Question', font=title_font, fill='#1d4ed8')
-        y += 64
         for line in q_lines:
             draw.text((padding, y), line, font=q_font, fill=fg)
             y += 52
