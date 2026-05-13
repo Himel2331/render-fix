@@ -27,7 +27,8 @@ if spec is None or spec.loader is None:
 base = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = base
 spec.loader.exec_module(base)
-
+# ইমেজ জেনারেশন আপাতত বন্ধ — শুধু text/poll পাঠাবে
+ENABLE_IMAGE_GENERATION = False
 
 # ============================================================
 # Advanced overlay: feasible additions without OCR / paid APIs
@@ -2594,6 +2595,8 @@ def _normalize_math_text(text: str) -> str:
 
 
 def _render_math_question_image(question: str, options: List[str]) -> Optional[bytes]:
+    if not ENABLE_IMAGE_GENERATION:
+        return None
     if not _HAS_MPL:
         return None
     q = _normalize_math_text(question)
@@ -3754,6 +3757,8 @@ def _contains_math_markup(text: str) -> bool:
 
 
 def _render_readable_text_image(text: str, width: int = 1280, font_size: int = 34, padding: int = 42, bg: str = '#ffffff', fg: str = '#101827', title: str = '') -> Optional[bytes]:
+    if not ENABLE_IMAGE_GENERATION:
+        return None
     text = _latex_to_pretty_text(text)
     if not text:
         return None
@@ -3788,6 +3793,8 @@ def _render_readable_text_image(text: str, width: int = 1280, font_size: int = 3
 
 
 def _render_poll_question_image(question: str, options: List[str]) -> Optional[bytes]:
+    if not ENABLE_IMAGE_GENERATION:
+        return None
     needs_image = _contains_math_markup(question) or any(_contains_math_markup(x) for x in options)
     if not needs_image:
         return None
